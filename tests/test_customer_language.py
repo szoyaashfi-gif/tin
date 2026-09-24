@@ -16,6 +16,8 @@ def test_manifest_declares_bounded_project_artifact_procedure():
     assert definition["executor"] == "codex.procedure"
     assert definition["schedule_modes"] == ["on_demand"]
     assert definition["input_schema"]["additionalProperties"] is False
+    assert definition["input_schema"]["required"] == ["project_id"]
+    assert definition["input_schema"]["properties"]["project_id"]["format"] == "uuid"
     assert definition["input_schema"]["properties"]["focus"]["maxLength"] == 2000
     assert definition["input_schema"]["properties"]["source_hint"]["maxLength"] == 1000
     assert definition["procedure"]["workspace"] == {"kind": "project.state"}
@@ -23,6 +25,19 @@ def test_manifest_declares_bounded_project_artifact_procedure():
     assert definition["procedure"]["sandbox"]["timeout_seconds"] == 900
     assert definition["procedure"]["output"]["path"] == "reports/CUSTOMER_LANGUAGE.md"
     assert definition["procedure"]["output"]["max_bytes"] == 40000
+
+
+def test_input_contract_has_required_and_bounded_fields():
+    definition = json.loads(MANIFEST.read_text())["definition"]["input_schema"]
+    properties = definition["properties"]
+
+    assert "project_id" in definition["required"]
+    assert "project_id" not in properties["focus"].get("required", [])
+    assert properties["focus"]["type"] == "string"
+    assert properties["source_hint"]["type"] == "string"
+    assert properties["focus"]["maxLength"] > 0
+    assert properties["source_hint"]["maxLength"] > 0
+    assert definition["additionalProperties"] is False
 
 
 def test_declared_resources_exist_and_skill_has_safety_boundaries():
