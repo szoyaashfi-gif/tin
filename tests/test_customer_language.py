@@ -28,7 +28,7 @@ def test_manifest_declares_bounded_project_artifact_procedure():
 def test_declared_resources_exist_and_skill_has_safety_boundaries():
     definition = json.loads(MANIFEST.read_text())["definition"]
     for path in definition["procedure"]["skill_files"]:
-        assert (ROOT / path.removeprefix("skills/")).exists() if path.startswith("skills/") else False
+        assert (ROOT / path).exists()
     prompt = PROMPT.read_text()
     skill = SKILL.read_text()
     combined = f"{prompt}\n{skill}"
