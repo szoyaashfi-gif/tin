@@ -1,0 +1,60 @@
+{
+  "package_format": "tin-workflow-package-v1",
+  "definition": {
+    "key": "people.employee_analysis",
+    "title": "Analyze employee data",
+    "description": "Turn anonymized employee data into a simple workforce report for a demo educational-products company.",
+    "version": "1.0.0",
+    "executor": "codex.procedure",
+    "schedule_modes": ["on_demand"],
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "focus": {
+          "type": "string",
+          "maxLength": 1000,
+          "title": "Analysis question",
+          "default": "",
+          "x-tin-ui": {
+            "control": "textarea",
+            "order": 10
+          }
+        },
+        "source_hint": {
+          "type": "string",
+          "maxLength": 500,
+          "title": "Optional data source hint",
+          "default": ""
+        }
+      },
+      "required": ["project_id"]
+    },
+    "procedure": {
+      "prompt_path": "PROMPT.md",
+      "skills_path": "skills",
+      "skill_files": [
+        "skills/employee-analysis/SKILL.md"
+      ],
+      "entry_skill": "employee-analysis",
+      "workspace": {
+        "kind": "project.state"
+      },
+      "sandbox": {
+        "profile": "isolated",
+        "egress": "fenced",
+        "timeout_seconds": 600
+      },
+      "output": {
+        "kind": "project.artifact",
+        "path": "reports/EMPLOYEE_ANALYSIS.md",
+        "media_type": "text/markdown",
+        "max_bytes": 30000
+      }
+    }
+  }
+}
